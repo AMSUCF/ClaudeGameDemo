@@ -18,24 +18,40 @@ export class GameState {
 
     // Register that a clue was found in a file
     registerClueFound(fileContent) {
+        console.log('[GAME] registerClueFound called');
+        console.log('[GAME] fileContent length:', fileContent.length);
+        console.log('[GAME] fileContent first 200 chars:', fileContent.substring(0, 200));
+
         // Extract clue number from content
         const match = fileContent.match(/\[CLUE #(\d+)/);
+        console.log('[GAME] Regex match result:', match);
 
         if (match) {
             const clueNumber = parseInt(match[1]);
+            console.log('[GAME] Clue number parsed:', clueNumber);
+            console.log('[GAME] Already found?', this.cluesFound.has(clueNumber));
 
             if (!this.cluesFound.has(clueNumber)) {
+                console.log('[GAME] Adding clue to set...');
                 this.cluesFound.add(clueNumber);
+                console.log('[GAME] Clues found now:', Array.from(this.cluesFound));
+
                 this.addNotification(`Clue #${clueNumber} discovered!`);
+                console.log('[GAME] Notification added');
 
                 // Check if game is solved
                 if (clueNumber === this.totalClues) {
                     this.gameSolved = true;
                     this.addNotification('CASE SOLVED! Congratulations, Detective!');
+                    console.log('[GAME] GAME SOLVED!');
                 }
 
-                console.log(`Clue ${clueNumber} found! Total: ${this.cluesFound.size}/${this.totalClues}`);
+                console.log(`[GAME] Clue ${clueNumber} found! Total: ${this.cluesFound.size}/${this.totalClues}`);
+            } else {
+                console.log('[GAME] Clue already found, skipping');
             }
+        } else {
+            console.log('[GAME] No clue match found in content');
         }
     }
 

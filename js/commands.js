@@ -136,8 +136,16 @@ export class CommandProcessor {
         }
 
         // Check if this file contains a clue
+        console.log('[CMD] Checking for clues in content...');
+        console.log('[CMD] Content length:', result.content.length);
+        console.log('[CMD] Content includes [CLUE #?', result.content.includes('[CLUE #'));
+
         if (result.content.includes('[CLUE #')) {
+            console.log('[CMD] CLUE DETECTED! Calling gameState.registerClueFound()');
+            console.log('[CMD] gameState exists?', !!this.gameState);
             this.gameState.registerClueFound(result.content);
+        } else {
+            console.log('[CMD] No clue marker found in this file');
         }
 
         return { output: result.content, shouldClose: false, shouldClear: false };

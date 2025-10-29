@@ -63,10 +63,8 @@ export class Desktop {
         // Render game notifications
         this.gameState.renderNotifications();
 
-        // Render progress indicator on desktop (top-right corner)
-        if (this.terminals.length > 0) {
-            this.gameState.renderProgress(width - 180, 10);
-        }
+        // Render progress indicator on desktop (top-right corner) - always visible
+        this.gameState.renderProgress(width - 180, 10);
     }
 
     renderBackground() {
