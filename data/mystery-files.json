@@ -1,0 +1,142 @@
+{
+  "C:": {
+    "type": "directory",
+    "contents": {
+      "Users": {
+        "type": "directory",
+        "contents": {
+          "Detective": {
+            "type": "directory",
+            "contents": {
+              "Desktop": {
+                "type": "directory",
+                "contents": {
+                  "case_notes.txt": {
+                    "type": "file",
+                    "content": "CASE #2847 - THE MISSING DATA\n========================\n\nA valuable research file has gone missing from Dr. Chen's computer.\nThe file contained breakthrough research on renewable energy.\n\nYour mission: Find the hidden research file and discover who took it.\n\nStart by checking the Documents folder for more information.\n\nUse DIR to list files, CD to change folders, and TYPE to read files.\n\n- Detective Morgan"
+                  },
+                  "quick_commands.txt": {
+                    "type": "file",
+                    "content": "COMMAND LINE QUICK REFERENCE\n==========================\n\nDIR - List files and folders in current directory\nCD [folder] - Change to a folder\nCD .. - Go up one folder\nTYPE [file] - Read a file's contents\nCLS - Clear the screen\nHELP - Show available commands\nTREE - Show folder structure\n\nRemember: Windows is not case-sensitive!\n"
+                  }
+                }
+              },
+              "Documents": {
+                "type": "directory",
+                "contents": {
+                  "investigation_log.txt": {
+                    "type": "file",
+                    "content": "INVESTIGATION LOG - Day 1\n========================\n\nDr. Chen reported the file missing yesterday evening.\nThe file was last seen in her Research folder.\n\nSuspects:\n1. Dr. Stevens - Colleague in same department\n2. Jamie Park - Research assistant\n3. Alex Rivera - IT administrator\n\nI found an unusual email in Dr. Chen's inbox.\nCheck the Downloads folder - there might be evidence there.\n\n[CLUE #1 FOUND: Investigation started]"
+                  },
+                  "suspects.txt": {
+                    "type": "file",
+                    "content": "SUSPECT PROFILES\n===============\n\nDr. Stevens:\n- Works in renewable energy research\n- Competing for the same grant as Dr. Chen\n- Has access to the lab\n\nJamie Park:\n- Graduate student\n- Works directly with Dr. Chen\n- Needs breakthrough research for thesis\n\nAlex Rivera:\n- IT administrator\n- Has access to all computers\n- Recently received a large sum of money\n\nOne of them has hidden something in the Windows folder..."
+                  }
+                }
+              },
+              "Downloads": {
+                "type": "directory",
+                "contents": {
+                  "security_footage.txt": {
+                    "type": "file",
+                    "content": "SECURITY FOOTAGE ANALYSIS\n========================\n\nTimestamp: Yesterday 11:47 PM\n\nFootage shows someone entering Dr. Chen's office.\nThey used an admin keycard to bypass security.\n\nThe person went straight to the computer.\nFootage is grainy but shows they copied something to a USB drive.\n\nIT logs might have more info. Check Alex's home folder if you can access it.\n\n[CLUE #2 FOUND: Admin keycard used]"
+                  },
+                  "email_evidence.txt": {
+                    "type": "file",
+                    "content": "FORWARDED EMAIL\n==============\n\nFrom: anonymous@securemail.com\nTo: ????????\nSubject: The offer still stands\n\nThe company is willing to pay $500,000 for the renewable energy research.\nAll you need to do is deliver the files by Friday.\n\nNo one will know. The detective won't find anything.\n\nMeet at the usual place.\n\n-R"
+                  }
+                }
+              },
+              "Music": {
+                "type": "directory",
+                "contents": {
+                  "nothing_here.txt": {
+                    "type": "file",
+                    "content": "Just music files. Nothing suspicious to see here!\n\n...but maybe check the Windows folder? I heard people sometimes hide things in system folders."
+                  }
+                }
+              }
+            }
+          },
+          "Alex": {
+            "type": "directory",
+            "contents": {
+              "Documents": {
+                "type": "directory",
+                "contents": {
+                  "personal_notes.txt": {
+                    "type": "file",
+                    "content": "PERSONAL NOTES\n=============\n\nI didn't do anything wrong.\nJust because I got that inheritance doesn't mean I stole anything.\n\nJamie has been acting strange lately.\nI saw them talking to someone from EnergyTech Corp last week.\n\nCheck the Public folder - sometimes people leave files there.\n\n[CLUE #3 FOUND: Jamie meeting with EnergyTech]"
+                  },
+                  "it_logs.txt": {
+                    "type": "file",
+                    "content": "IT ACCESS LOGS - Last 48 Hours\n==============================\n\n[2024-10-27 23:45] - Admin login: Alex Rivera\n[2024-10-27 23:47] - File access: Research folder\n[2024-10-27 23:48] - USB device connected\n[2024-10-27 23:52] - Admin logout\n\nWait... I was home at that time! Someone used my credentials!\n\nJamie asked me for my password last week for 'testing purposes'..."
+                  }
+                }
+              }
+            }
+          },
+          "Public": {
+            "type": "directory",
+            "contents": {
+              "shared_files.txt": {
+                "type": "file",
+                "content": "Public shared folder. Anyone can put files here.\n\nLooks like someone dropped a file...\nCheck the 'temp' subfolder."
+              },
+              "temp": {
+                "type": "directory",
+                "contents": {
+                  "URGENT_READ_ME.txt": {
+                    "type": "file",
+                    "content": "I'm Dr. Stevens. I didn't steal anything!\n\nBut I know who did. I saw Jamie copying files late at night.\nWhen I confronted them, they threatened to frame me.\n\nJamie has a hidden folder somewhere.\nI think it's in their Documents, but I couldn't get access.\n\nPlease believe me!\n\n[CLUE #4 FOUND: Stevens accuses Jamie]"
+                  }
+                }
+              }
+            }
+          },
+          "Jamie": {
+            "type": "directory",
+            "contents": {
+              "Documents": {
+                "type": "directory",
+                "contents": {
+                  "thesis_draft.txt": {
+                    "type": "file",
+                    "content": "MY THESIS - DRAFT\n=================\n\nI've been working on this for three years.\nDr. Chen's research would make it perfect.\n\nBut I would never steal! I'm not a thief.\n\nOkay, maybe I was approached by EnergyTech Corp.\nThey offered money, but I said no!\n\n...mostly.\n\nFine, check the '.backup' folder if you don't believe me."
+                  },
+                  ".backup": {
+                    "type": "directory",
+                    "contents": {
+                      "confession.txt": {
+                        "type": "file",
+                        "content": "PRIVATE - DO NOT READ\n=====================\n\nOkay, I admit it. I took the research files.\n\nI used Alex's stolen credentials to access Dr. Chen's computer.\nI copied everything to a USB drive.\n\nEnergyTech Corp offered me $500,000 and a job.\nI couldn't resist. My student loans are crushing me.\n\nThe files are hidden in the Windows System folder.\nFilename: research_data_FINAL.txt\n\nI'm sorry, Dr. Chen. I was desperate.\n\n- Jamie Park\n\n[CLUE #5 FOUND: Jamie's confession - You're getting close!]"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "Windows": {
+        "type": "directory",
+        "contents": {
+          "System": {
+            "type": "directory",
+            "contents": {
+              "drivers.txt": {
+                "type": "file",
+                "content": "System drivers... nothing interesting here.\n\nJust a bunch of boring system files."
+              },
+              "research_data_FINAL.txt": {
+                "type": "file",
+                "content": "DR. CHEN'S RENEWABLE ENERGY RESEARCH\n====================================\n\n***** BREAKTHROUGH DISCOVERY *****\n\nNew solar panel efficiency method: 97.3% energy conversion!\n\nThis research represents years of work and could revolutionize\nrenewable energy technology worldwide.\n\n[CLASSIFIED DATA FOLLOWS...]\n\n=====================================\n\nCONGRATULATIONS, DETECTIVE!\n\nYou found the stolen research file!\n\nTHE CULPRIT: Jamie Park\nTHE MOTIVE: Money and career advancement\nTHE METHOD: Stole Alex's admin credentials\n\nYou've successfully solved the case!\nYou've also learned essential Windows command line skills:\n\n✓ DIR - Listing directory contents\n✓ CD - Navigating folders\n✓ TYPE - Reading files\n✓ Exploring nested directories\n✓ Finding hidden files\n\nGREAT JOB! You're now ready to use the command line like a pro!\n\n[CASE SOLVED - FINAL CLUE #6 FOUND!]"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
