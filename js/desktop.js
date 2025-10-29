@@ -63,9 +63,9 @@ export class Desktop {
         // Render game notifications
         this.gameState.renderNotifications();
 
-        // Render progress indicator on desktop
+        // Render progress indicator on desktop (top-right corner)
         if (this.terminals.length > 0) {
-            this.gameState.renderProgress(width - 180, height - 50);
+            this.gameState.renderProgress(width - 180, 10);
         }
     }
 
@@ -155,8 +155,9 @@ export class Desktop {
         noStroke();
         rect(0, height - taskbarHeight, width, taskbarHeight);
 
-        // Start button area (decorative)
-        fill(50, 50, 50);
+        // Start button area with hover effect
+        const isStartHovered = this.isMouseOverStartButton();
+        fill(isStartHovered ? 70 : 50, isStartHovered ? 70 : 50, isStartHovered ? 70 : 50);
         rect(0, height - taskbarHeight, 100, taskbarHeight);
 
         fill(255);
@@ -196,7 +197,19 @@ export class Desktop {
                mouseY >= icon.y && mouseY <= icon.y + icon.height;
     }
 
+    isMouseOverStartButton() {
+        const taskbarHeight = 40;
+        return mouseX >= 0 && mouseX <= 100 &&
+               mouseY >= height - taskbarHeight && mouseY <= height;
+    }
+
     handleMousePressed() {
+        // Check if clicking Start button
+        if (this.isMouseOverStartButton()) {
+            this.gameState.addNotification('This feature is not available. Use Command Prompt to complete your mission.');
+            return;
+        }
+
         // Check if clicking on an icon
         this.icons.forEach((icon, index) => {
             if (this.isMouseOverIcon(icon)) {

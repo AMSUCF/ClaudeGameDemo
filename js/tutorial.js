@@ -13,19 +13,13 @@ export class Tutorial {
             },
             {
                 title: 'Getting Started',
-                text: 'Click the Command Prompt icon on the desktop to begin.\nThe black window with green text is your command line interface.\n\nClick anywhere to continue...'
+                text: 'Click the Command Prompt icon on the desktop to begin.\nThe black window with green text is your command line\ninterface.\n\nClick anywhere to continue...'
             },
             {
                 title: 'Basic Commands',
                 text: 'Essential commands:\n\nDIR - Lists all files and folders\nCD [folder] - Changes to a folder\nCD .. - Goes up one folder\nTYPE [file] - Reads a file\n\nClick anywhere to start investigating!'
             }
         ];
-
-        this.showHelpButton = true;
-        this.helpButtonX = 10;
-        this.helpButtonY = 10;
-        this.helpButtonWidth = 80;
-        this.helpButtonHeight = 30;
 
         this.showHintPanel = false;
     }
@@ -34,11 +28,6 @@ export class Tutorial {
         // Show tutorial overlay if active
         if (this.showTutorial && this.tutorialStep < this.tutorialMessages.length) {
             this.renderTutorialOverlay();
-        }
-
-        // Show help button
-        if (this.showHelpButton && !this.showTutorial) {
-            this.renderHelpButton();
         }
 
         // Show hint panel if active
@@ -83,21 +72,6 @@ export class Tutorial {
         fill(150);
         textSize(14);
         text(`Step ${this.tutorialStep + 1} of ${this.tutorialMessages.length}`, width / 2, panelY + panelHeight - 40);
-    }
-
-    renderHelpButton() {
-        // Help button background
-        const isHover = this.isMouseOverHelpButton();
-        fill(isHover ? 80 : 60);
-        stroke(isHover ? 150 : 100);
-        strokeWeight(2);
-        rect(this.helpButtonX, this.helpButtonY, this.helpButtonWidth, this.helpButtonHeight, 5);
-
-        // Help button text
-        fill(255);
-        textSize(14);
-        textAlign(CENTER, CENTER);
-        text('HELP', this.helpButtonX + this.helpButtonWidth / 2, this.helpButtonY + this.helpButtonHeight / 2);
     }
 
     renderHintPanel() {
@@ -160,12 +134,6 @@ export class Tutorial {
             return true;
         }
 
-        // Handle help button
-        if (this.isMouseOverHelpButton() && !this.showTutorial) {
-            this.showHintPanel = !this.showHintPanel;
-            return true;
-        }
-
         // Handle hint panel close button
         if (this.showHintPanel && this.isMouseOverCloseButton()) {
             this.showHintPanel = false;
@@ -179,13 +147,6 @@ export class Tutorial {
         }
 
         return false;
-    }
-
-    isMouseOverHelpButton() {
-        return mouseX >= this.helpButtonX &&
-               mouseX <= this.helpButtonX + this.helpButtonWidth &&
-               mouseY >= this.helpButtonY &&
-               mouseY <= this.helpButtonY + this.helpButtonHeight;
     }
 
     isMouseOverCloseButton() {
