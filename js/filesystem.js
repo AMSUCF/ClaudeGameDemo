@@ -3,19 +3,25 @@
 export class FileSystem {
     constructor() {
         this.currentPath = 'C:\\Users\\Detective';
-        this.root = null;
+        // Initialize with fallback immediately to prevent null errors
+        this.root = this.createFallbackFileSystem();
+        console.log('[FS] FileSystem initialized with fallback');
+        console.log('[FS] Current path:', this.currentPath);
+        // Load the full file system asynchronously
         this.loadFileSystem();
     }
 
     async loadFileSystem() {
         try {
+            console.log('[FS] Attempting to load mystery-files.json...');
             const response = await fetch('data/mystery-files.json');
             this.root = await response.json();
-            console.log('File system loaded successfully');
+            console.log('[FS] File system loaded successfully from JSON');
+            console.log('[FS] Root structure:', Object.keys(this.root));
         } catch (error) {
-            console.error('Failed to load file system:', error);
-            // Create a minimal fallback file system
-            this.root = this.createFallbackFileSystem();
+            console.error('[FS] Failed to load file system:', error);
+            console.log('[FS] Using fallback file system');
+            // Fallback is already set in constructor
         }
     }
 
@@ -53,6 +59,9 @@ export class FileSystem {
 
     // Navigate to a directory (returns true if successful)
     changeDirectory(path) {
+        console.log('[FS] changeDirectory called with:', path);
+        console.log('[FS] Current path before change:', this.currentPath);
+
         if (!path || path === '') {
             return { success: false, message: 'Path cannot be empty' };
         }
@@ -62,44 +71,54 @@ export class FileSystem {
         // Handle special cases
         if (path === '..') {
             targetPath = this.getParentPath(this.currentPath);
+            console.log('[FS] CD ..: parent path calculated as:', targetPath);
         } else if (path === '.' || path === '.\\') {
             return { success: true, message: '' };
         } else if (path.includes(':')) {
             // Absolute path
             targetPath = path;
+            console.log('[FS] Absolute path detected:', targetPath);
         } else {
             // Relative path
             targetPath = this.joinPaths(this.currentPath, path);
+            console.log('[FS] Relative path joined to:', targetPath);
         }
 
         // Normalize path
         targetPath = this.normalizePath(targetPath);
+        console.log('[FS] After normalization:', targetPath);
 
         // Check if directory exists
         const item = this.getItemAtPath(targetPath);
 
         if (!item) {
+            console.log('[FS] changeDirectory: target path not found');
             return { success: false, message: `The system cannot find the path specified.` };
         }
 
         if (item.type !== 'directory') {
+            console.log('[FS] changeDirectory: target is not a directory');
             return { success: false, message: `The directory name is invalid.` };
         }
 
         this.currentPath = targetPath;
+        console.log('[FS] changeDirectory: success, new path:', this.currentPath);
         return { success: true, message: '' };
     }
 
     // Get directory listing
     listDirectory(path = null) {
         const targetPath = path || this.currentPath;
+        console.log('[FS] listDirectory called for path:', targetPath);
         const item = this.getItemAtPath(targetPath);
 
         if (!item) {
+            console.log('[FS] listDirectory: item not found at path:', targetPath);
             return { success: false, message: `File Not Found`, entries: [] };
         }
 
         if (item.type !== 'directory') {
+            console.log('[FS] listDirectory: item is not a directory:', item.type);
             return { success: false, message: `${targetPath} is not a directory`, entries: [] };
         }
 
@@ -113,6 +132,7 @@ export class FileSystem {
             });
         }
 
+        console.log('[FS] listDirectory: found', entries.length, 'entries');
         return { success: true, message: '', entries: entries };
     }
 
@@ -143,25 +163,35 @@ export class FileSystem {
 
     // Get item at specific path
     getItemAtPath(path) {
-        if (!this.root) return null;
+        console.log('[FS] getItemAtPath called with:', path);
+        if (!this.root) {
+            console.log('[FS] getItemAtPath: root is null!');
+            return null;
+        }
 
         const normalizedPath = this.normalizePath(path);
+        console.log('[FS] getItemAtPath normalized to:', normalizedPath);
         const parts = normalizedPath.split('\\').filter(p => p.length > 0);
+        console.log('[FS] getItemAtPath parts:', parts);
 
         let current = this.root;
 
         for (const part of parts) {
             if (!current || !current.contents) {
+                console.log('[FS] getItemAtPath: no contents at part:', part);
                 return null;
             }
 
             current = current.contents[part];
 
             if (!current) {
+                console.log('[FS] getItemAtPath: part not found:', part);
                 return null;
             }
+            console.log('[FS] getItemAtPath: found part:', part);
         }
 
+        console.log('[FS] getItemAtPath: success, returning item');
         return current;
     }
 
@@ -200,14 +230,22 @@ export class FileSystem {
 
     // Get parent directory path
     getParentPath(path) {
+        console.log('[FS] getParentPath called with:', path);
         const parts = path.split('\\').filter(p => p.length > 0);
+        console.log('[FS] getParentPath parts:', parts);
 
+        // If at root (e.g., "C:"), return the root itself (can't go higher)
         if (parts.length <= 1) {
-            return parts[0] + '\\'; // Return drive root
+            const rootPath = parts[0]; // Just "C:" without backslash
+            console.log('[FS] getParentPath: at root, returning:', rootPath);
+            return rootPath; // Return drive root without trailing backslash
         }
 
+        // Remove last part to go up one level
         parts.pop();
-        return parts.join('\\');
+        const parentPath = parts.join('\\');
+        console.log('[FS] getParentPath: returning:', parentPath);
+        return parentPath;
     }
 
     // Get directory tree (for tree command)

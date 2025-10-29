@@ -24,6 +24,8 @@ export class CommandProcessor {
 
     // Execute a command
     execute(input) {
+        console.log('[CMD] execute called with input:', input);
+
         if (!input || input.trim() === '') {
             return { output: '', shouldClose: false, shouldClear: false };
         }
@@ -33,10 +35,16 @@ export class CommandProcessor {
         const command = parts[0].toLowerCase();
         const args = parts.slice(1);
 
+        console.log('[CMD] Parsed command:', command, 'args:', args);
+
         // Check if command exists
         if (this.commands[command]) {
-            return this.commands[command](args);
+            console.log('[CMD] Command found, executing:', command);
+            const result = this.commands[command](args);
+            console.log('[CMD] Command result:', result);
+            return result;
         } else {
+            console.log('[CMD] Command not recognized:', command);
             return {
                 output: `'${parts[0]}' is not recognized as an internal or external command,\noperable program or batch file.\n\nType HELP to see available commands.`,
                 shouldClose: false,
@@ -47,9 +55,12 @@ export class CommandProcessor {
 
     // DIR command - list directory contents
     cmdDir(args) {
+        console.log('[CMD] DIR command executing');
         const result = this.fileSystem.listDirectory();
+        console.log('[CMD] DIR result:', result);
 
         if (!result.success) {
+            console.log('[CMD] DIR failed:', result.message);
             return { output: result.message, shouldClose: false, shouldClear: false };
         }
 
@@ -58,6 +69,8 @@ export class CommandProcessor {
         // Count directories and files
         const dirs = result.entries.filter(e => e.type === 'directory');
         const files = result.entries.filter(e => e.type === 'file');
+
+        console.log('[CMD] DIR found', dirs.length, 'directories and', files.length, 'files');
 
         // List directories first
         if (dirs.length > 0) {
