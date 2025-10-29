@@ -176,13 +176,21 @@ export class FileSystem {
 
         let current = this.root;
 
-        for (const part of parts) {
-            if (!current || !current.contents) {
-                console.log('[FS] getItemAtPath: no contents at part:', part);
-                return null;
-            }
+        for (let i = 0; i < parts.length; i++) {
+            const part = parts[i];
 
-            current = current.contents[part];
+            // First part is drive letter (e.g., "C:") - access directly from root
+            if (i === 0) {
+                console.log('[FS] getItemAtPath: accessing drive letter directly:', part);
+                current = current[part];  // Access drive letter directly from root
+            } else {
+                // Subsequent parts need .contents
+                if (!current || !current.contents) {
+                    console.log('[FS] getItemAtPath: no contents at part:', part);
+                    return null;
+                }
+                current = current.contents[part];
+            }
 
             if (!current) {
                 console.log('[FS] getItemAtPath: part not found:', part);
