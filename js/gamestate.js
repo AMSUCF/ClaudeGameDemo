@@ -22,8 +22,8 @@ export class GameState {
         console.log('[GAME] fileContent length:', fileContent.length);
         console.log('[GAME] fileContent first 200 chars:', fileContent.substring(0, 200));
 
-        // Extract clue number from content
-        const match = fileContent.match(/\[CLUE #(\d+)/);
+        // Extract clue number from content (matches both "[CLUE #X" and "CLUE #X" formats)
+        const match = fileContent.match(/CLUE #(\d+)/);
         console.log('[GAME] Regex match result:', match);
 
         if (match) {
