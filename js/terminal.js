@@ -21,6 +21,14 @@ export class Terminal {
         this.dragOffsetX = 0;
         this.dragOffsetY = 0;
 
+        // Resize state
+        this.isResizing = false;
+        this.minWidth = 400;
+        this.minHeight = 300;
+        this.maxWidth = 1000;
+        this.maxHeight = 700;
+        this.resizeHandleSize = 16;
+
         // Text buffer
         this.outputLines = [];
         this.currentInput = '';
@@ -110,6 +118,21 @@ export class Terminal {
 
         // Draw text content
         this.renderText();
+
+        // Draw resize handle (bottom-right corner)
+        const isOverResize = this.isMouseOverResizeHandle();
+        fill(isOverResize ? 150 : 100);
+        stroke(isOverResize ? 200 : 150);
+        strokeWeight(1);
+        const resizeX = this.x + this.width - this.resizeHandleSize;
+        const resizeY = this.y + this.height - this.resizeHandleSize;
+
+        // Draw three diagonal lines for resize grip
+        for (let i = 0; i < 3; i++) {
+            const offset = i * 5 + 4;
+            line(resizeX + offset, resizeY + this.resizeHandleSize - 2,
+                 resizeX + this.resizeHandleSize - 2, resizeY + offset);
+        }
     }
 
     renderText() {
@@ -121,26 +144,39 @@ export class Terminal {
         const contentY = this.y + this.titleBarHeight + this.padding;
         const contentX = this.x + this.padding;
 
-        // Calculate which lines to show based on scroll
-        const totalLines = this.outputLines.length + 1; // +1 for current input line
-        const startLine = Math.max(0, totalLines - this.maxVisibleLines);
+        // Recalculate max visible lines based on current height
+        this.maxVisibleLines = Math.floor((this.height - this.titleBarHeight - this.padding * 2) / this.lineHeight);
+
+        // Calculate scroll range
+        const totalLines = this.outputLines.length;
+        const maxScrollOffset = Math.max(0, totalLines - this.maxVisibleLines);
+
+        // Clamp scroll offset
+        this.scrollOffset = Math.max(0, Math.min(this.scrollOffset, maxScrollOffset));
+
+        // Calculate which lines to show based on scroll offset
+        const startLine = this.scrollOffset;
+        const endLine = Math.min(this.outputLines.length, startLine + this.maxVisibleLines);
 
         // Render visible lines
-        for (let i = startLine; i < this.outputLines.length; i++) {
+        for (let i = startLine; i < endLine; i++) {
             const lineY = contentY + (i - startLine) * this.lineHeight;
             text(this.outputLines[i], contentX, lineY);
         }
 
-        // Render current input line with cursor
-        const inputLineY = contentY + (this.outputLines.length - startLine) * this.lineHeight;
-        const inputText = this.currentInput;
-        text(inputText, contentX, inputLineY);
+        // Render current input line with cursor (only if there's room)
+        const currentLineIndex = this.outputLines.length - startLine;
+        if (currentLineIndex < this.maxVisibleLines) {
+            const inputLineY = contentY + currentLineIndex * this.lineHeight;
+            const inputText = this.currentInput;
+            text(inputText, contentX, inputLineY);
 
-        // Draw cursor
-        if (this.cursorVisible && this.isFocused) {
-            const cursorX = contentX + textWidth(inputText);
-            fill(200, 255, 200);
-            rect(cursorX, inputLineY, 8, this.fontSize);
+            // Draw cursor
+            if (this.cursorVisible && this.isFocused) {
+                const cursorX = contentX + textWidth(inputText);
+                fill(200, 255, 200);
+                rect(cursorX, inputLineY, 8, this.fontSize);
+            }
         }
     }
 
@@ -225,8 +261,7 @@ export class Terminal {
             return;
         }
 
-        // Show new prompt
-        this.outputLines.push('');
+        // Show new prompt (no empty line needed)
         this.showPrompt();
 
         // Auto-scroll to bottom
@@ -234,10 +269,36 @@ export class Terminal {
     }
 
     scrollToBottom() {
-        this.scrollOffset = Math.max(0, this.outputLines.length - this.maxVisibleLines);
+        // Scroll to show the most recent output and input line
+        this.scrollOffset = Math.max(0, this.outputLines.length - this.maxVisibleLines + 1);
+    }
+
+    handleMouseWheel(delta) {
+        if (!this.isMouseInside(mouseX, mouseY)) return false;
+
+        // Scroll speed: 3 lines per wheel tick
+        const scrollAmount = 3;
+
+        if (delta > 0) {
+            // Scroll down
+            const maxScrollOffset = Math.max(0, this.outputLines.length - this.maxVisibleLines);
+            this.scrollOffset = Math.min(maxScrollOffset, this.scrollOffset + scrollAmount);
+        } else {
+            // Scroll up
+            this.scrollOffset = Math.max(0, this.scrollOffset - scrollAmount);
+        }
+
+        return true; // Consumed the event
     }
 
     handleMousePressed(mx, my) {
+        // Check if clicking resize handle
+        if (this.isMouseOverResizeHandle()) {
+            this.isResizing = true;
+            this.focus();
+            return true;
+        }
+
         // Check if clicking on title bar (for dragging)
         if (mx >= this.x && mx <= this.x + this.width &&
             my >= this.y && my <= this.y + this.titleBarHeight) {
@@ -267,10 +328,25 @@ export class Terminal {
 
     handleMouseReleased() {
         this.isDragging = false;
+        this.isResizing = false;
     }
 
     handleMouseDragged(mx, my) {
-        if (this.isDragging) {
+        if (this.isResizing) {
+            // Calculate new dimensions
+            const newWidth = mx - this.x;
+            const newHeight = my - this.y;
+
+            // Apply constraints
+            this.width = Math.max(this.minWidth, Math.min(this.maxWidth, newWidth));
+            this.height = Math.max(this.minHeight, Math.min(this.maxHeight, newHeight));
+
+            // Recalculate max visible lines
+            this.maxVisibleLines = Math.floor((this.height - this.titleBarHeight - this.padding * 2) / this.lineHeight);
+
+            // Adjust scroll if needed
+            this.scrollToBottom();
+        } else if (this.isDragging) {
             this.x = mx - this.dragOffsetX;
             this.y = my - this.dragOffsetY;
 
@@ -290,6 +366,13 @@ export class Terminal {
         const closeY = this.y + 7;
         return mouseX >= closeX && mouseX <= closeX + 16 &&
                mouseY >= closeY && mouseY <= closeY + 16;
+    }
+
+    isMouseOverResizeHandle() {
+        const resizeX = this.x + this.width - this.resizeHandleSize;
+        const resizeY = this.y + this.height - this.resizeHandleSize;
+        return mouseX >= resizeX && mouseX <= this.x + this.width &&
+               mouseY >= resizeY && mouseY <= this.y + this.height;
     }
 
     focus() {

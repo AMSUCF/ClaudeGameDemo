@@ -77,3 +77,10 @@ window.keyTyped = function() {
         return false;
     }
 }
+
+// P5.js mouse wheel event
+window.mouseWheel = function(event) {
+    desktop.handleMouseWheel(event.delta);
+    // Prevent page scrolling
+    return false;
+}

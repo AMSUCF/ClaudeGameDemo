@@ -309,4 +309,17 @@ export class Desktop {
             focusedTerminal.handleInput(key);
         }
     }
+
+    handleMouseWheel(delta) {
+        // Send wheel event to terminals
+        for (let i = this.terminals.length - 1; i >= 0; i--) {
+            const terminal = this.terminals[i];
+            if (terminal.isActive() && terminal.handleMouseWheel) {
+                if (terminal.handleMouseWheel(delta)) {
+                    // Terminal consumed the event
+                    return;
+                }
+            }
+        }
+    }
 }
