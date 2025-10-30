@@ -147,36 +147,37 @@ export class Terminal {
         // Recalculate max visible lines based on current height
         this.maxVisibleLines = Math.floor((this.height - this.titleBarHeight - this.padding * 2) / this.lineHeight);
 
-        // Calculate scroll range
+        // Reserve one line for the input prompt
+        const maxOutputLines = Math.max(1, this.maxVisibleLines - 1);
+
+        // Calculate scroll range (accounting for reserved input line)
         const totalLines = this.outputLines.length;
-        const maxScrollOffset = Math.max(0, totalLines - this.maxVisibleLines);
+        const maxScrollOffset = Math.max(0, totalLines - maxOutputLines);
 
         // Clamp scroll offset
         this.scrollOffset = Math.max(0, Math.min(this.scrollOffset, maxScrollOffset));
 
-        // Calculate which lines to show based on scroll offset
+        // Calculate which output lines to show based on scroll offset
         const startLine = this.scrollOffset;
-        const endLine = Math.min(this.outputLines.length, startLine + this.maxVisibleLines);
+        const endLine = Math.min(this.outputLines.length, startLine + maxOutputLines);
 
-        // Render visible lines
+        // Render visible output lines
         for (let i = startLine; i < endLine; i++) {
             const lineY = contentY + (i - startLine) * this.lineHeight;
             text(this.outputLines[i], contentX, lineY);
         }
 
-        // Render current input line with cursor (only if there's room)
-        const currentLineIndex = this.outputLines.length - startLine;
-        if (currentLineIndex < this.maxVisibleLines) {
-            const inputLineY = contentY + currentLineIndex * this.lineHeight;
-            const inputText = this.currentInput;
-            text(inputText, contentX, inputLineY);
+        // Always render current input line with cursor at the bottom
+        const inputLineIndex = endLine - startLine; // Position after last output line
+        const inputLineY = contentY + inputLineIndex * this.lineHeight;
+        const inputText = this.currentInput;
+        text(inputText, contentX, inputLineY);
 
-            // Draw cursor
-            if (this.cursorVisible && this.isFocused) {
-                const cursorX = contentX + textWidth(inputText);
-                fill(200, 255, 200);
-                rect(cursorX, inputLineY, 8, this.fontSize);
-            }
+        // Draw cursor
+        if (this.cursorVisible && this.isFocused) {
+            const cursorX = contentX + textWidth(inputText);
+            fill(200, 255, 200);
+            rect(cursorX, inputLineY, 8, this.fontSize);
         }
     }
 
@@ -274,8 +275,9 @@ export class Terminal {
     }
 
     scrollToBottom() {
-        // Scroll to show the most recent output and input line
-        this.scrollOffset = Math.max(0, this.outputLines.length - this.maxVisibleLines + 1);
+        // Scroll to show the most recent output lines (reserving one line for input)
+        const maxOutputLines = Math.max(1, this.maxVisibleLines - 1);
+        this.scrollOffset = Math.max(0, this.outputLines.length - maxOutputLines);
     }
 
     handleMouseWheel(delta) {
@@ -284,9 +286,12 @@ export class Terminal {
         // Scroll speed: 3 lines per wheel tick
         const scrollAmount = 3;
 
+        // Calculate max scroll offset (reserving one line for input)
+        const maxOutputLines = Math.max(1, this.maxVisibleLines - 1);
+        const maxScrollOffset = Math.max(0, this.outputLines.length - maxOutputLines);
+
         if (delta > 0) {
             // Scroll down
-            const maxScrollOffset = Math.max(0, this.outputLines.length - this.maxVisibleLines);
             this.scrollOffset = Math.min(maxScrollOffset, this.scrollOffset + scrollAmount);
         } else {
             // Scroll up
