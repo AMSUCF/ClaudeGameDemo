@@ -186,6 +186,8 @@ export class Terminal {
         // Handle regular character input
         if (key.length === 1 && key !== '\n' && key !== '\r') {
             this.currentInput += key;
+            // Auto-scroll to bottom when user types
+            this.scrollToBottom();
         }
     }
 
@@ -201,6 +203,7 @@ export class Terminal {
             if (this.currentInput.length > 0) {
                 this.currentInput = this.currentInput.slice(0, -1);
             }
+            this.scrollToBottom();
         }
         // Up arrow - previous command
         else if (keyCode === 38) { // UP ARROW
@@ -212,6 +215,7 @@ export class Terminal {
                 }
                 this.currentInput = this.commandHistory[this.historyIndex];
             }
+            this.scrollToBottom();
         }
         // Down arrow - next command
         else if (keyCode === 40) { // DOWN ARROW
@@ -224,6 +228,7 @@ export class Terminal {
                     this.currentInput = '';
                 }
             }
+            this.scrollToBottom();
         }
     }
 
